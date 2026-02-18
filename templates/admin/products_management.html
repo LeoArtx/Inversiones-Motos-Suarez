@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inversiones Moto Suarez - Administración de Productos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .product-form {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: var(--product-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .product-form:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--button-bg);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .form-icon {
+            margin-right: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .toast {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: var(--button-bg);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .error {
+            border-color: #e74c3c !important;
+        }
+
+        .error+.error-message {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    {% set current_page = 'products' %}
+
+    <main>
+        <div class="dashboard">
+            <h1 class="section-header">
+                <i class="fas fa-boxes"></i>
+                Administración de Productos
+            </h1>
+
+            <div class="product-form" id="productForm">
+                <h2 class="section-header">
+                    <i class="fas fa-plus"></i>
+                    Registrar Nuevo Producto
+                </h2>
+
+                <form id="productRegistrationForm">
+                    <div class="form-group">
+                        <label for="productImage">
+                            <i class="fas fa-image form-icon"></i>
+                            Imagen del Producto <span class="required">*</span>
+                        </label>
+                        <input type="file" id="productImage" name="image" accept="image/*" required>
+                        <small class="form-text text-muted">Seleccione una imagen o proporcione una URL</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productName">
+                            <i class="fas fa-tag form-icon"></i>
+                            Nombre <span class="required">*</span>
+                        </label>
+                        <input type="text" id="productName" name="name" required>
+                        <div class="error-message">El nombre es obligatorio</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productPrice">
+                            <i class="fas fa-dollar-sign form-icon"></i>
+                            Precio ($) <span class="required">*</span>
+                        </label>
+                        <input type="number" id="productPrice" name="price" step="0.01" min="0" required>
+                        <div class="error-message">El precio debe ser mayor a cero</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productStock">
+                            <i class="fas fa-warehouse form-icon"></i>
+                            Cantidad en Stock <span class="required">*</span>
+                        </label>
+                        <input type="number" id="productStock" name="stock_quantity" min="0" required>
+                        <div class="error-message">La cantidad debe ser mayor a cero</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productDescription">
+                            <i class="fas fa-align-left form-icon"></i>
+                            Descripción <span class="required">*</span>
+                        </label>
+                        <textarea id="productDescription" name="description" required></textarea>
+                        <div class="error-message">La descripción es obligatoria</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productCategory">
+                            <i class="fas fa-list form-icon"></i>
+                            Categoría <span class="required">*</span>
+                        </label>
+                        <select id="productCategory" name="category" required>
+                            <option value="">Seleccione una categoría</option>
+                            <option value="Motor y Encendido">Motor y Encendido</option>
+                            <option value="Freno y Transmisión">Freno y Transmisión</option>
+                            <option value="Iluminación y Seguridad">Iluminación y Seguridad</option>
+                            <option value="Accesorios y Estética">Accesorios y Estética</option>
+                        </select>
+                        <div class="error-message">Seleccione una categoría</div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary"
+                            onclick="window.location.href='/admin/products'">
+                            <i class="fas fa-arrow-left"></i>
+                            Volver
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Registrar Producto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Producto registrado exitosamente</span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    <script>
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            const form = document.getElementById('productRegistrationForm');
+
+            // Validate required fields
+            const requiredFields = form.querySelectorAll('[required]');
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('error');
+                    isValid = false;
+                } else {
+                    field.classList.remove('error');
+                }
+            });
+
+            // Validate price
+            const priceField = document.getElementById('productPrice');
+            if (priceField.value && parseFloat(priceField.value) <= 0) {
+                priceField.classList.add('error');
+                isValid = false;
+            }
+
+            // Validate stock
+            const stockField = document.getElementById('productStock');
+            if (stockField.value && parseInt(stockField.value) <= 0) {
+                stockField.classList.add('error');
+                isValid = false;
+            }
+
+            // Validate category
+            const categoryField = document.getElementById('productCategory');
+            if (!categoryField.value) {
+                categoryField.classList.add('error');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastMessage.textContent = message;
+            toast.className = `toast ${type} show`;
+
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('productRegistrationForm').reset();
+            document.querySelectorAll('.error').forEach(field => {
+                field.classList.remove('error');
+            });
+        }
+
+        // Handle form submission
+        document.getElementById('productRegistrationForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            if (!validateForm()) {
+                return;
+            }
+
+            try {
+                const formData = new FormData(this);
+
+                const response = await fetch('/api/products/register', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Producto registrado exitosamente');
+                    resetForm();
+                } else {
+                    showToast('Error al registrar producto: ' + data.message, 'error');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error de conexión', 'error');
+            }
+        });
+
+        // Clear error on input
+        document.querySelectorAll('input, textarea, select').forEach(field => {
+            field.addEventListener('input', function () {
+                this.classList.remove('error');
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check user status
+            checkUserStatus();
+
+            // Setup dropdown menus
+            setupDropdownMenus();
+        });
+    </script>
+</body>
+
+</html>

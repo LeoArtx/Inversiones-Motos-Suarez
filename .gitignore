@@ -1,0 +1,33 @@
+# Entornos virtuales
+venv/
+env/
+.venv/
+ENV/
+
+# Archivos de entorno
+# .env
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de log
+*.log
+
+# Archivos de base de datos locales
+# *.sqlite3
+# instance
+
+# Carpetas de migración
+migrations/
+
+# Archivos creados por el sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de Docker
+docker-compose.override.yml
+
+# Archivos de PyCharm
+.idea/

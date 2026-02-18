@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inversiones Moto Suarez - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    {% set current_page = 'index' %}
+    {% include 'admin/header_admin.html' %}
+
+    <main class="dashboard">
+        <div class="dashboard-grid">
+            <div class="dashboard-card" onclick="window.location.href='/admin/clients'">
+                <i class="fas fa-users"></i>
+                <h3>Gestión de Clientes</h3>
+            </div>
+            <div class="dashboard-card" onclick="window.location.href='/admin/products'">
+                <i class="fas fa-boxes"></i>
+                <h3>Gestión de Productos</h3>
+            </div>
+            <div class="dashboard-card" onclick="window.location.href='/admin/purchases'">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Gestión de Compras</h3>
+            </div>
+            <div class="dashboard-card" onclick="window.location.href='/admin/reports'">
+                <i class="fas fa-chart-bar"></i>
+                <h3>Reportes</h3>
+            </div>
+        </div>
+    </main>
+
+    <button class="theme-selector" id="theme-selector" aria-label="Cambiar tema">
+        <i class="fas fa-sun"></i>
+    </button>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+
+</html>

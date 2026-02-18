@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inversiones Moto Suarez - Visualización de Productos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    {% set current_page = 'products' %}
+    {% include 'admin/header_admin.html' %}
+
+    <main class="product-grid">
+        <div class="section-header">
+            <h2>Productos Disponibles</h2>
+            <button class="btn btn-primary" onclick="window.location.href='/admin/products_management'">Administrar
+                Productos</button>
+        </div>
+
+        <div id="no-products-message" style="display: none; text-align: center; margin: 20px;">
+            <p>No hay productos registrados.</p>
+        </div>
+
+        <div id="product-table-container">
+            <div class="table-container">
+                <table class="sales-table">
+                    <thead>
+                        <tr>
+                            <th>ID del Producto</th>
+                            <th>Nombre del Repuesto</th>
+                            <th>Categoría</th>
+                            <th>Precio Unitario</th>
+                            <th>Stock (Cantidad)</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body">
+                        <!-- Los productos se cargarán dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Product Details Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <h2>Detalles del Producto</h2>
+            <div class="product-details">
+                <div class="product-image-container">
+                    <img id="modal-product-image" src="" alt="Imagen del Producto" class="product-image">
+                </div>
+                <div class="product-info">
+                    <p><strong>Nombre:</strong> <span id="modal-product-name"></span></p>
+                    <p><strong>Precio:</strong> $<span id="modal-product-price"></span></p>
+                    <p><strong>Cantidad en Stock:</strong> <span id="modal-product-stock"></span></p>
+                    <p><strong>Categoría:</strong> <span id="modal-product-category"></span></p>
+                    <p><strong>Descripción:</strong></p>
+                    <p id="modal-product-description"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="theme-selector" id="theme-selector" aria-label="Cambiar tema">
+        <i class="fas fa-sun"></i>
+    </button>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/products.js') }}"></script>
+</body>
+
+</html>

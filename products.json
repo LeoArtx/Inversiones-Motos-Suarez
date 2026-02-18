@@ -1,0 +1,56 @@
+[
+    {
+        "product_id": 1,
+        "name": "Brujía",
+        "description": "Test descripción",
+        "price": 30.0,
+        "stock_quantity": 5,
+        "category": "Motor y Encendido",
+        "image_url": "/static/img/products/IMG-20251124-WA0005.jpg"
+    },
+    {
+        "product_id": 2,
+        "name": "Pastilla de freno",
+        "description": "Descripción prueba\r\n## Prueba",
+        "price": 50.0,
+        "stock_quantity": 10,
+        "category": "Motor y Encendido",
+        "image_url": "/static/img/products/IMG-20251124-WA0006.jpg"
+    },
+    {
+        "product_id": 3,
+        "name": "Corneta",
+        "description": "# Prueba 1\r\n## Prueba 2\r\n### Prueba 3\r\n**detalles**",
+        "price": 10.0,
+        "stock_quantity": 3,
+        "category": "Iluminacion y Seguridad",
+        "image_url": "/static/img/products/IMG-20251124-WA0007.jpg"
+    },
+    {
+        "product_id": 5,
+        "name": "objeto",
+        "description": "En buen estado",
+        "price": 100.0,
+        "stock_quantity": 13,
+        "category": "Iluminacion y Seguridad",
+        "image_url": "/static/img/products/00007-482560683.png"
+    },
+    {
+        "product_id": 6,
+        "name": "accesorio",
+        "description": "accesorio",
+        "price": 5.0,
+        "stock_quantity": 1,
+        "category": "Accesorios y Estetica",
+        "image_url": "/static/img/products/repuestos.png"
+    },
+    {
+        "product_id": 7,
+        "name": "Aceite",
+        "description": "Aceite ",
+        "price": 15.0,
+        "stock_quantity": 50,
+        "category": "Motor y Encendido",
+        "image_url": "/static/img/products/IMG-20251124-WA0011.jpg"
+    }
+]

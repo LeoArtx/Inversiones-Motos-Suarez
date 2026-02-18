@@ -1,0 +1,25 @@
+<!-- Products Frontend Display -->
+<section class="features">
+    <div class="carousel-container">
+        <div class="carousel-wrapper">
+            <div class="feature-grid carousel-track" id="product-carousel">
+                {% for product in products %}
+                <div class="feature-card" data-product-id="{{ product.product_id }}"
+                    onclick="showProductDetails({{ product.product_id }})">
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}"
+                        style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px;">
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.category }}</p>
+                    <p class="price">${{ "%.2f"|format(product.price) }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <button class="carousel-arrow carousel-prev" id="carousel-prev" style="display: none;">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="carousel-arrow carousel-next" id="carousel-next" style="display: none;">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+</section>

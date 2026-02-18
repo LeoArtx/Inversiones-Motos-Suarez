@@ -1,0 +1,56 @@
+[
+    {
+        "first_name": "Admin",
+        "last_name": "User",
+        "cedula": "00000001",
+        "email": "leonardojosherarc@gmail.com",
+        "password_hash": "$2b$12$fe7yTa9QlHAb6waybhw7QuGxoVhEwB7XyH1GuN8tAoNfNOLLjRnFG",
+        "phone": "123",
+        "role": "admin"
+    },
+    {
+        "first_name": "luigi",
+        "last_name": "leoxito",
+        "email": "asus@gmail.com",
+        "cedula": "30467698",
+        "phone": "04240000000",
+        "password_hash": "$2b$12$XhyeQoZPbQm2vRh3NKGT3.JkY6scDukZ1cQjZdhiZ/TJoyghY3jo6",
+        "role": "client"
+    },
+    {
+        "first_name": "Test",
+        "last_name": "User",
+        "email": "test@example.com",
+        "password_hash": "$2b$12$NJ.1ID0vJL3ZBvj/Fgl8/..YFgi8HATXO8gAb0LCVNY5R8quyEb4i",
+        "cedula": "12345678",
+        "phone": "04121234567",
+        "role": "cliente"
+    },
+    {
+        "first_name": "Mario",
+        "last_name": "Federico",
+        "email": "elpajaro@gmail.com",
+        "password_hash": "$2b$12$MaXXHyPZijf422nUbdeJXeIr86Gl0DRcOG8CnG0lQZD.zRZbKcTby",
+        "cedula": "31031000",
+        "phone": "04141234567",
+        "role": "cliente"
+    },
+    {
+        "first_name": "Test",
+        "last_name": "User",
+        "email": "test2@example.com",
+        "password_hash": "$2b$12$ErzSEO/57RL11JKNi.ZrhuUOqgQI1PHnMONVRe7piX2CM2641Mzm6",
+        "cedula": "87654321",
+        "phone": "04123456789",
+        "role": "cliente"
+    },
+    {
+        "first_name": "Fede",
+        "last_name": "Verde",
+        "email": "esee@gmail.com",
+        "password_hash": "$2b$12$WHBIQW2I6fpL3SeLgB6ENuj0iIbdg3.H70suuNL1pgJ8xDyhYhOFO",
+        "cedula": "11013265",
+        "phone": "04241230123",
+        "role": "cliente"
+    }
+]

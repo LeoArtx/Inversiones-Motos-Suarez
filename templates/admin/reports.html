@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inversiones Moto Suarez - Reportes de Transacciones</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Estilos específicos para reportes */
+
+        /* Hero Section Simplificado */
+        .hero-section {
+            background: var(--header-bg);
+            min-height: 120px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            color: white;
+            margin: 0;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .admin-content {
+            background: var(--product-bg);
+            min-height: calc(100vh - 200px);
+            padding: 2rem 0;
+            transition: background 0.3s ease;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Secciones de Reportes */
+        .report-section {
+            background: var(--product-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            border: 2px solid rgba(231, 76, 60, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .report-section:hover {
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-title {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            color: var(--accent-color);
+            font-size: 1.6rem;
+        }
+
+        /* Filtros */
+        .filters-section {
+            background: rgba(231, 76, 60, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-group input[type="date"] {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: var(--product-bg);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .filter-group input[type="date"]:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-left: auto;
+            flex-wrap: wrap;
+        }
+
+        .primary-btn,
+        .secondary-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .primary-btn {
+            background: var(--button-bg);
+            color: white;
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .secondary-btn {
+            background: linear-gradient(45deg, #27ae60, #229954);
+            color: white;
+        }
+
+        .secondary-btn:hover:not(:disabled) {
+            background: linear-gradient(45deg, #229954, #1e8449);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+        }
+
+        .secondary-btn:disabled,
+        .primary-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Tarjetas de resumen */
+        .report-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: var(--product-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .summary-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+            border-color: rgba(231, 76, 60, 0.2);
+        }
+
+        .summary-card h3 {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .summary-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            line-height: 1;
+        }
+
+        .summary-card .value.currency {
+            color: #27ae60;
+        }
+
+        .summary-card .value i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            opacity: 0.2;
+            display: block;
+        }
+
+        /* Tabla de reportes */
+        .table-container {
+            background: var(--product-bg);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .reports-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .reports-table thead {
+            background: var(--header-bg);
+            color: white;
+        }
+
+        .reports-table th {
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .reports-table tbody tr {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .reports-table tbody tr:hover {
+            background: rgba(231, 76, 60, 0.05);
+            transform: scale(1.01);
+        }
+
+        .reports-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .reports-table tbody tr.selected {
+            background: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .reports-table td {
+            padding: 1.2rem 1.5rem;
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+
+        .reports-table td:first-child {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .reports-table td:last-child {
+            font-weight: 700;
+            color: #27ae60;
+        }
+
+        /* Mensaje sin datos */
+        .no-data-message {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #7f8c8d;
+            background: var(--product-bg);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .no-data-message i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+            color: var(--accent-color);
+        }
+
+        .no-data-message p {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--product-bg);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading-spinner.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 5px solid rgba(231, 76, 60, 0.1);
+            border-top: 5px solid var(--accent-color);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-spinner p {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Modal de Factura Detallada */
+        .invoice-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow-y: auto;
+        }
+
+        .invoice-modal.active {
+            display: block;
+        }
+
+        .invoice-content {
+            background: white;
+            margin: 2% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .invoice-header {
+            background: var(--header-bg);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-invoice {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-invoice:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .invoice-header h2 {
+            font-size: 2rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .invoice-number {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .invoice-body {
+            padding: 2rem;
+            background: white;
+            color: #333;
+        }
+
+        .invoice-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .invoice-section:last-child {
+            border-bottom: none;
+        }
+
+        .invoice-section h3 {
+            color: #8b0000;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .invoice-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .detail-item label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-item span {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .invoice-products {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .invoice-products h4 {
+            color: #8b0000;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .invoice-total {
+            background: #8b0000;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .invoice-total h3 {
+            color: white;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .invoice-total .amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .invoice-actions {
+            padding: 1.5rem 2rem;
+            background: #f8f9fa;
+            border-radius: 0 0 15px 15px;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .invoice-actions button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .print-invoice-btn {
+            background: linear-gradient(45deg, #27ae60, #229954);
+            color: white;
+        }
+
+        .print-invoice-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+        }
+
+        /* Estilos de impresión para factura */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .print-invoice-area,
+            .print-invoice-area * {
+                visibility: visible;
+            }
+
+            .print-invoice-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+            }
+
+            .invoice-actions,
+            .close-invoice {
+                display: none !important;
+            }
+
+            .invoice-content {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+
+        /* Estilos de impresión para lista */
+        @media print {
+
+            .print-list-area,
+            .print-list-area * {
+                visibility: visible;
+            }
+
+            .print-list-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+            }
+
+            .print-header {
+                text-align: center;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                border-bottom: 3px solid #8b0000;
+            }
+
+            .print-logo {
+                max-width: 120px;
+                margin-bottom: 15px;
+            }
+
+            .print-header h1 {
+                font-size: 28px;
+                color: #8b0000;
+                margin: 10px 0;
+                font-weight: 700;
+            }
+
+            .print-header h2 {
+                font-size: 20px;
+                color: #333;
+                margin: 5px 0;
+                font-weight: 600;
+            }
+
+            .print-date-range {
+                font-size: 14px;
+                color: #666;
+                margin-top: 10px;
+                font-style: italic;
+            }
+
+            .print-summary {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                margin-bottom: 30px;
+                padding: 25px;
+                background: #f8f9fa;
+                border-radius: 10px;
+                border: 2px solid #8b0000;
+            }
+
+            .print-summary-item {
+                text-align: center;
+                padding: 15px;
+            }
+
+            .print-summary-item .label {
+                font-size: 11px;
+                color: #666;
+                text-transform: uppercase;
+                margin-bottom: 8px;
+                font-weight: 600;
+                letter-spacing: 1px;
+            }
+
+            .print-summary-item .value {
+                font-size: 24px;
+                font-weight: 700;
+                color: #8b0000;
+            }
+
+            .reports-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+
+            .reports-table th {
+                background: #8b0000;
+                color: white;
+                padding: 14px 10px;
+                font-size: 11px;
+                text-align: left;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+
+            .reports-table td {
+                padding: 12px 10px;
+                border-bottom: 1px solid #ddd;
+                font-size: 10px;
+                color: #333;
+            }
+
+            .reports-table tbody tr:nth-child(even) {
+                background: #f9f9f9;
+            }
+
+            .reports-table td:first-child {
+                font-weight: 700;
+                color: #8b0000;
+            }
+
+            .reports-table td:last-child {
+                font-weight: 700;
+                color: #27ae60;
+            }
+
+            .print-footer {
+                margin-top: 50px;
+                padding-top: 25px;
+                border-top: 2px solid #ddd;
+                text-align: center;
+                font-size: 10px;
+                color: #666;
+            }
+
+            .print-footer p {
+                margin: 5px 0;
+            }
+
+            /* Ocultar elementos que no deben imprimirse */
+            .filters-section,
+            .action-buttons,
+            header,
+            nav,
+            footer,
+            .theme-selector,
+            .no-data-message,
+            .hero-section,
+            .report-summary {
+                display: none !important;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 0 1rem;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                min-width: 100%;
+            }
+
+            .action-buttons {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .action-buttons button {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .reports-table {
+                font-size: 0.85rem;
+            }
+
+            .reports-table th,
+            .reports-table td {
+                padding: 0.8rem 0.5rem;
+            }
+
+            .summary-card .value {
+                font-size: 2rem;
+            }
+
+            .invoice-detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% set current_page = 'reports' %}
+    {% include 'admin/header_admin.html' %}
+
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1><i class="fas fa-file-invoice-dollar"></i> Reportes de Transacciones</h1>
+        </div>
+    </section>
+
+    <main class="admin-content">
+        <div class="admin-container">
+            <!-- SECCIÓN 1: Reporte Múltiple -->
+            <div class="report-section">
+                <h2 class="section-title">
+                    <i class="fas fa-file-alt"></i> Reporte Múltiple
+                </h2>
+
+                <!-- Filtros de Fecha -->
+                <div class="filters-section">
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label for="multi-start-date">
+                                <i class="fas fa-calendar-day"></i> Fecha Inicio:
+                            </label>
+                            <input type="date" id="multi-start-date" required>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="multi-end-date">
+                                <i class="fas fa-calendar-check"></i> Fecha Fin:
+                            </label>
+                            <input type="date" id="multi-end-date" required>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button id="load-multi-report" class="primary-btn">
+                                <i class="fas fa-search"></i> Cargar Reporte
+                            </button>
+
+                            <button id="print-multi-report" class="secondary-btn" disabled>
+                                <i class="fas fa-print"></i> Imprimir / Guardar PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumen del Reporte -->
+                <div id="multi-report-summary" class="report-summary" style="display: none;">
+                    <div class="summary-card">
+                        <i class="fas fa-receipt"></i>
+                        <h3>Total Transacciones</h3>
+                        <div class="value" id="multi-total-transactions">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-box"></i>
+                        <h3>Total Ítems Vendidos</h3>
+                        <div class="value" id="multi-total-items">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-dollar-sign"></i>
+                        <h3>Monto Total</h3>
+                        <div class="value currency" id="multi-total-amount">$0.00</div>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div class="loading-spinner" id="multi-loading-spinner">
+                    <div class="spinner"></div>
+                    <p><i class="fas fa-hourglass-half"></i> Cargando reporte...</p>
+                </div>
+
+                <!-- Tabla de Reporte -->
+                <div class="table-container" id="multi-report-table-container" style="display: none;">
+                    <table class="reports-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> Ref/ID</th>
+                                <th><i class="fas fa-user"></i> Usuario</th>
+                                <th><i class="fas fa-box-open"></i> Producto Principal</th>
+                                <th><i class="fas fa-sort-numeric-up"></i> Cant. Ítems</th>
+                                <th><i class="fas fa-calendar"></i> Fecha</th>
+                                <th><i class="fas fa-dollar-sign"></i> Monto Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="multi-reports-table-body">
+                            <!-- Las filas se cargarán dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mensaje de Sin Datos -->
+                <div id="multi-no-data-message" class="no-data-message" style="display: none;">
+                    <i class="fas fa-inbox"></i>
+                    <p><strong>No se encontraron transacciones en el período seleccionado.</strong></p>
+                    <p style="font-size: 0.95rem; margin-top: 10px; color: #95a5a6;">
+                        Intenta con un rango de fechas diferente.
+                    </p>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: Reporte Individual -->
+            <div class="report-section">
+                <h2 class="section-title">
+                    <i class="fas fa-file-invoice"></i> Reporte Individual
+                </h2>
+
+                <!-- Filtros de Fecha -->
+                <div class="filters-section">
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label for="single-start-date">
+                                <i class="fas fa-calendar-day"></i> Fecha Inicio:
+                            </label>
+                            <input type="date" id="single-start-date" required>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="single-end-date">
+                                <i class="fas fa-calendar-check"></i> Fecha Fin:
+                            </label>
+                            <input type="date" id="single-end-date" required>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button id="load-single-report" class="primary-btn">
+                                <i class="fas fa-search"></i> Buscar Transacciones
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div class="loading-spinner" id="single-loading-spinner">
+                    <div class="spinner"></div>
+                    <p><i class="fas fa-hourglass-half"></i> Buscando transacciones...</p>
+                </div>
+
+                <!-- Tabla de Transacciones -->
+                <div class="table-container" id="single-report-table-container" style="display: none;">
+                    <p
+                        style="padding: 1rem; background: rgba(231, 76, 60, 0.1); border-radius: 8px; margin-bottom: 1rem; color: var(--text-color);">
+                        <i class="fas fa-info-circle"></i> <strong>Selecciona una transacción</strong> para generar su
+                        reporte detallado
+                    </p>
+                    <table class="reports-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> Ref/ID</th>
+                                <th><i class="fas fa-user"></i> Usuario</th>
+                                <th><i class="fas fa-box-open"></i> Producto Principal</th>
+                                <th><i class="fas fa-sort-numeric-up"></i> Cant. Ítems</th>
+                                <th><i class="fas fa-calendar"></i> Fecha</th>
+                                <th><i class="fas fa-dollar-sign"></i> Monto Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="single-reports-table-body">
+                            <!-- Las filas se cargarán dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mensaje de Sin Datos -->
+                <div id="single-no-data-message" class="no-data-message" style="display: none;">
+                    <i class="fas fa-inbox"></i>
+                    <p><strong>No se encontraron transacciones en el período seleccionado.</strong></p>
+                    <p style="font-size: 0.95rem; margin-top: 10px; color: #95a5a6;">
+                        Intenta con un rango de fechas diferente.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Factura Detallada -->
+    <div id="invoice-modal" class="invoice-modal">
+        <div class="invoice-content print-invoice-area">
+            <div class="invoice-header">
+                <span class="close-invoice" id="close-invoice">&times;</span>
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo"
+                    style="max-width: 80px; margin-bottom: 15px;">
+                <h2>INVERSIONES MOTO SUÁREZ</h2>
+                <div class="invoice-number" id="invoice-number">Factura #</div>
+            </div>
+
+            <div class="invoice-body">
+                <!-- Información del Usuario -->
+                <div class="invoice-section">
+                    <h3><i class="fas fa-user"></i> Información del Cliente</h3>
+                    <div class="invoice-detail-grid">
+                        <div class="detail-item">
+                            <label>Nombre Completo</label>
+                            <span id="inv-user-name"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Cédula de Identidad</label>
+                            <span id="inv-user-cedula"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Teléfono</label>
+                            <span id="inv-user-phone"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Correo Electrónico</label>
+                            <span id="inv-user-email"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detalles de la Transacción -->
+                <div class="invoice-section">
+                    <h3><i class="fas fa-receipt"></i> Detalles de la Transacción</h3>
+                    <div class="invoice-detail-grid">
+                        <div class="detail-item">
+                            <label>Fecha de Compra</label>
+                            <span id="inv-purchase-date"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Referencia/ID</label>
+                            <span id="inv-purchase-ref"></span>
+                        </div>
+                    </div>
+
+                    <!-- Productos Comprados -->
+                    <div class="invoice-products">
+                        <h4><i class="fas fa-box-open"></i> Productos Comprados</h4>
+                        <div id="inv-products-list">
+                            <!-- Los productos se cargarán aquí -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monto Total -->
+                <div class="invoice-total">
+                    <h3>MONTO TOTAL</h3>
+                    <div class="amount" id="inv-total-amount">$0.00</div>
+                </div>
+            </div>
+
+            <div class="invoice-actions">
+                <button class="print-invoice-btn" id="print-invoice-btn">
+                    <i class="fas fa-print"></i> Imprimir Factura
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Área de Impresión para Lista (oculta en pantalla, visible en impresión) -->
+    <div class="print-list-area" style="display: none;">
+        <div class="print-header">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Inversiones Moto Suárez"
+                class="print-logo">
+            <h1>INVERSIONES MOTO SUÁREZ</h1>
+            <h2 id="print-title">Reporte Consolidado de Ventas</h2>
+            <div class="print-date-range" id="print-date-range"></div>
+        </div>
+
+        <div class="print-summary" id="print-summary">
+            <div class="print-summary-item">
+                <div class="label">Total Transacciones</div>
+                <div class="value" id="print-total-transactions">0</div>
+            </div>
+            <div class="print-summary-item">
+                <div class="label">Total Ítems Vendidos</div>
+                <div class="value" id="print-total-items">0</div>
+            </div>
+            <div class="print-summary-item">
+                <div class="label">Monto Total ($)</div>
+                <div class="value" id="print-total-amount">$0.00</div>
+            </div>
+        </div>
+
+        <table class="reports-table" id="print-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Producto Principal</th>
+                    <th>Cant. Ítems</th>
+                    <th>Fecha</th>
+                    <th>Monto Total</th>
+                </tr>
+            </thead>
+            <tbody id="print-table-body">
+                <!-- Se copiará desde la tabla principal -->
+            </tbody>
+        </table>
+
+        <div class="print-footer">
+            <p><strong>Inversiones Moto Suárez</strong> | Tel: +58 426-4603994 | Monagas, Venezuela</p>
+            <p>Generado el: <span id="print-generation-date"></span></p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <p><i class="fas fa-phone"></i> +58 426-4603994</p>
+                <p><i class="fas fa-map-marker-alt"></i> Monagas, Venezuela</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Inversiones Moto Suárez. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button class="theme-selector" id="theme-selector" aria-label="Cambiar tema">
+        <i class="fas fa-sun"></i>
+    </button>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin/reports.js') }}"></script>
+</body>
+
+</html>

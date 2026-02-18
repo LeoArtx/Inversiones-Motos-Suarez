@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Inversiones Moto Suarez</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .catalog-container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .sidebar {
+            width: 25%;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .filter-option {
+            display: block;
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .filter-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: #eee;
+            border-radius: 50%;
+        }
+
+        .filter-option:hover input~.checkmark {
+            background-color: #ccc;
+        }
+
+        .filter-option input:checked~.checkmark {
+            background-color: #007bff;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .filter-option input:checked~.checkmark:after {
+            display: block;
+        }
+
+        .filter-option .checkmark:after {
+            top: 6px;
+            left: 6px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: white;
+        }
+
+        .count {
+            font-size: 0.9em;
+            color: #666;
+            margin-left: 5px;
+        }
+
+        .floating-filter-btn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+        }
+
+        .filter-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1002;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .filter-modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .skeleton {
+            background: #e0e0e0;
+            border-radius: 8px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .skeleton-card {
+            height: 200px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .content {
+            width: 75%;
+        }
+
+        .feature-card {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .feature-card.hidden {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .catalog-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                width: 100%;
+            }
+
+            .floating-filter-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Moto Suárez" class="logo">
+            <h1>Inversiones Moto Suarez</h1>
+        </div>
+        <div class="user-greeting" id="user-greeting"></div>
+        <nav>
+            <a href="#" id="auth-link" class="nav-link auth-link">
+                <i class="fas fa-user"></i> Iniciar Sesión
+            </a>
+            <div class="dropdown-menu" id="user-dropdown" style="display: none;">
+                <button class="dropdown-toggle" id="dropdown-toggle">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+                <div class="dropdown-content" id="dropdown-content">
+                    <a href="/" class="dropdown-item">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                    <a href="/catalog" class="dropdown-item">
+                        <i class="fas fa-motorcycle"></i> Productos
+                    </a>
+                    <a href="/cart" class="dropdown-item">
+                        <i class="fas fa-shopping-cart"></i> Mi Carrito
+                    </a>
+                    <a href="/my-purchases" class="dropdown-item">
+                        <i class="fas fa-history"></i> Mis Compras
+                    </a>
+                    <a href="/profile" class="dropdown-item">
+                        <i class="fas fa-user"></i> Mi Usuario
+                    </a>
+                    <a href="#" class="dropdown-item" id="logout-link">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+            <a href="/admin/dashboard" id="admin-link" class="nav-link admin-link" style="display: none;">
+                <i class="fas fa-cog"></i> Panel Admin
+            </a>
+            <div class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
+
+    <main class="catalog-container">
+        <aside class="sidebar">
+            <h3>Filtrar por Categoría</h3>
+            <form id="category-filter">
+                <label class="filter-option">
+                    <input type="checkbox" name="category" value="Motor y Encendido" checked>
+                    <span class="checkmark"></span>
+                    Motor y Encendido <span class="count" id="count-Motor y Encendido"></span>
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" name="category" value="Freno y Transmision" checked>
+                    <span class="checkmark"></span>
+                    Freno y Transmisión <span class="count" id="count-Freno y Transmision"></span>
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" name="category" value="Iluminacion y Seguridad" checked>
+                    <span class="checkmark"></span>
+                    Iluminación y Seguridad <span class="count" id="count-Iluminacion y Seguridad"></span>
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" name="category" value="Accesorios y Estetica" checked>
+                    <span class="checkmark"></span>
+                    Accesorios y Estética <span class="count" id="count-Accesorios y Estetica"></span>
+                </label>
+            </form>
+        </aside>
+
+        <section class="content">
+            <div class="section-header">
+                <h2><i class="fas fa-motorcycle"></i> Catálogo de Productos</h2>
+            </div>
+
+            <div class="feature-grid" id="product-grid">
+                <!-- Products will be loaded dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="client-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <div class="contact-info">
+                    <p><i class="fas fa-phone"></i> +58 426-4603994</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Monagas, Venezuela</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Inversiones Moto Suárez. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button class="theme-selector" id="theme-selector" aria-label="Cambiar tema">
+        <i class="fas fa-sun"></i>
+    </button>
+
+    <button class="floating-filter-btn" id="floating-filter-btn">
+        <i class="fas fa-filter"></i>
+    </button>
+
+    <div class="filter-modal" id="filter-modal">
+        <div class="filter-modal-content">
+            <h3>Filtrar por Categoría</h3>
+            <form id="mobile-category-filter">
+                <label class="filter-option">
+                    <input type="checkbox" name="category" value="Motor y Encendido" checked>
+                    <span class="checkmark"></span>
+                    Motor y Encendido <span class="count" id="mobile-count-Motor y Encendido"></span>
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" name="category" value="Freno y Transmision" checked>
+                    <span class="checkmark"></span>
+                    Freno y Transmisión <span class="count" id="mobile-count-Freno y Transmision"></span>
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" name="category" value="Iluminacion y Seguridad" checked>
+                    <span class="checkmark"></span>
+                    Iluminación y Seguridad <span class="count" id="mobile-count-Iluminacion y Seguridad"></span>
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" name="category" value="Accesorios y Estetica" checked>
+                    <span class="checkmark"></span>
+                    Accesorios y Estética <span class="count" id="mobile-count-Accesorios y Estetica"></span>
+                </label>
+            </form>
+            <button id="apply-filters-btn" class="cta-button">Aplicar Filtros</button>
+        </div>
+    </div>
+
+    {% include 'login_modal.html' %}
+
+    <!-- Product Details Modal -->
+    <div id="product-details-modal" class="modal">
+        <div class="modal-overlay" id="product-modal-overlay"></div>
+        <div class="modal-content product-details-modal">
+            <span class="close-modal" id="close-product-modal">&times;</span>
+            <div class="product-details-content">
+                <div class="product-image-large">
+                    <img id="product-modal-image" src="" alt="Imagen del Producto">
+                </div>
+                <div class="product-info-large">
+                    <h1 id="product-modal-name"></h1>
+                    <div class="product-price-large">
+                        <span id="product-modal-price"></span>
+                    </div>
+                    <div class="product-rating">
+                        <span id="product-rating-stars" data-value="0">★★★★★</span>
+                    </div>
+                    <div class="product-description-large">
+                        <div id="product-modal-description"></div>
+                    </div>
+                    <div class="quantity-control">
+                        <p id="available-stock"></p>
+                        <div class="quantity-selector">
+                            <button id="decrement-btn">-</button>
+                            <input type="number" id="quantity-input" value="1" min="1" readonly>
+                            <button id="increment-btn">+</button>
+                        </div>
+                    </div>
+                    <button id="add-to-cart-modal" class="cta-button">Añadir al Carrito</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+    <script>
+        let allProducts = [];
+        let categoryCounts = {};
+
+        function showSkeletonLoader() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 6; i++) {
+                const skeleton = document.createElement('div');
+                skeleton.className = 'feature-card skeleton skeleton-card';
+                grid.appendChild(skeleton);
+            }
+        }
+
+        function renderProducts(products) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'feature-card';
+                card.setAttribute('data-product-id', product.product_id);
+                card.setAttribute('data-category', product.category);
+                card.onclick = () => showProductDetails(product.product_id);
+                card.innerHTML = `
+                    <img src="${product.image_url}" alt="${product.name}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px;">
+                    <h3>${product.name}</h3>
+                    <p>${product.category}</p>
+                    <p class="price">$${parseFloat(product.price).toFixed(2)}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateCategoryCounts() {
+            categoryCounts = {};
+            allProducts.forEach(product => {
+                categoryCounts[product.category] = (categoryCounts[product.category] || 0) + 1;
+            });
+            Object.keys(categoryCounts).forEach(category => {
+                const countElement = document.getElementById(`count-${category.replace(/\s+/g, ' ')}`);
+                const mobileCountElement = document.getElementById(`mobile-count-${category.replace(/\s+/g, ' ')}`);
+                if (countElement) countElement.textContent = `(${categoryCounts[category]})`;
+                if (mobileCountElement) mobileCountElement.textContent = `(${categoryCounts[category]})`;
+            });
+        }
+
+        function filterProducts() {
+            const selectedCategories = Array.from(document.querySelectorAll('#category-filter input[type="checkbox"]:checked')).map(cb => cb.value);
+            const mobileSelectedCategories = Array.from(document.querySelectorAll('#mobile-category-filter input[type="checkbox"]:checked')).map(cb => cb.value);
+
+            // Sync checkboxes between desktop and mobile
+            document.querySelectorAll('#category-filter input[type="checkbox"]').forEach(cb => {
+                cb.checked = selectedCategories.includes(cb.value);
+            });
+            document.querySelectorAll('#mobile-category-filter input[type="checkbox"]').forEach(cb => {
+                cb.checked = mobileSelectedCategories.includes(cb.value);
+            });
+
+            const activeCategories = selectedCategories.length > 0 ? selectedCategories : Object.keys(categoryCounts);
+            const filteredProducts = allProducts.filter(product => activeCategories.includes(product.category));
+
+            showSkeletonLoader();
+            setTimeout(() => {
+                renderProducts(filteredProducts);
+            }, 300); // Simulate loading time
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            showSkeletonLoader();
+
+            try {
+                const response = await fetch('/api/products/');
+                allProducts = await response.json();
+                updateCategoryCounts();
+                renderProducts(allProducts);
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('product-grid').innerHTML = '<p>Error loading products.</p>';
+            }
+
+            // Desktop filter
+            document.getElementById('category-filter').addEventListener('change', filterProducts);
+
+            // Mobile filter
+            document.getElementById('mobile-category-filter').addEventListener('change', filterProducts);
+            document.getElementById('apply-filters-btn').addEventListener('click', () => {
+                document.getElementById('filter-modal').style.display = 'none';
+                filterProducts();
+            });
+
+            // Floating button
+            document.getElementById('floating-filter-btn').addEventListener('click', () => {
+                document.getElementById('filter-modal').style.display = 'flex';
+            });
+
+            // Close modal on overlay click
+            document.getElementById('filter-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('filter-modal')) {
+                    document.getElementById('filter-modal').style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

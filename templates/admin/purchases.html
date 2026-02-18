@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inversiones Moto Suarez - Gestión de Compras</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    {% set current_page = 'purchases' %}
+    {% include 'admin/header_admin.html' %}
+    </header>
+
+    <main class="admin-content">
+        <div class="admin-container">
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Buscar por usuario o referencia...">
+                </div>
+
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label for="status-filter">Estado:</label>
+                        <select id="status-filter">
+                            <option value="">Todos los estados</option>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Procesando">Procesando</option>
+                            <option value="Completada">Completada</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="date-from">Desde:</label>
+                        <input type="date" id="date-from">
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="date-to">Hasta:</label>
+                        <input type="date" id="date-to">
+                    </div>
+
+                    <button id="clear-filters" class="clear-filters-btn">
+                        <i class="fas fa-times"></i> Limpiar Filtros
+                    </button>
+                </div>
+            </div>
+
+            <!-- Title Section -->
+            <h2 class="section-title">Compras Realizadas por Clientes</h2>
+
+            <!-- Purchases Table -->
+            <div class="table-container">
+                <table class="purchases-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Producto Principal</th>
+                            <th>Cantidad de Ítems</th>
+                            <th>Referencia/ID</th>
+                            <th>Fecha de Compra</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="purchases-table-body">
+                        <!-- Purchase rows will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <div class="pagination-info">
+                    <span id="pagination-info">Mostrando 0 de 0 compras</span>
+                </div>
+                <div class="pagination-controls">
+                    <button id="prev-page" class="pagination-btn" disabled>
+                        <i class="fas fa-chevron-left"></i> Anterior
+                    </button>
+                    <span id="current-page">1</span>
+                    <button id="next-page" class="pagination-btn" disabled>
+                        Siguiente <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Purchase Details Modal -->
+    <div id="purchase-modal" class="modal">
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div class="modal-content large-modal">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <h2>Detalles de la Compra</h2>
+
+            <div class="modal-body">
+                <!-- User Details Section -->
+                <div class="modal-section">
+                    <h3><i class="fas fa-user"></i> Información del Usuario</h3>
+                    <div class="user-details-grid">
+                        <div class="detail-item">
+                            <label>Nombre Completo:</label>
+                            <span id="modal-user-name"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Cédula de Identidad:</label>
+                            <span id="modal-user-cedula"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Número de Teléfono:</label>
+                            <span id="modal-user-phone"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Correo Electrónico:</label>
+                            <span id="modal-user-email"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction Details Section -->
+                <div class="modal-section">
+                    <h3><i class="fas fa-receipt"></i> Detalles de la Transacción</h3>
+                    <div class="transaction-details-grid">
+                        <div class="detail-item">
+                            <label>Referencia/ID de Compra:</label>
+                            <span id="modal-purchase-ref"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Fecha de Compra:</label>
+                            <span id="modal-purchase-date"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Estado:</label>
+                            <select id="modal-purchase-status" class="status-select">
+                                <option value="Pendiente">Pendiente</option>
+                                <option value="Procesando">Procesando</option>
+                                <option value="Completada">Completada</option>
+                                <option value="Cancelada">Cancelada</option>
+                            </select>
+                        </div>
+                        <div class="detail-item">
+                            <label>Monto Total:</label>
+                            <span id="modal-purchase-total"></span>
+                        </div>
+                    </div>
+
+                    <!-- Products List -->
+                    <div class="products-list-section">
+                        <h4>Productos Comprados:</h4>
+                        <div id="modal-products-list" class="products-list">
+                            <!-- Products will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Proof Section -->
+                <div class="modal-section">
+                    <h3><i class="fas fa-file-image"></i> Comprobante de Pago</h3>
+                    <div class="payment-proof-container">
+                        <img id="modal-payment-proof" src="" alt="Comprobante de Pago" class="payment-proof-image">
+                        <div class="proof-actions">
+                            <button id="zoom-proof" class="zoom-btn">
+                                <i class="fas fa-search-plus"></i> Ampliar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button id="update-status-btn" class="primary-btn">
+                    <i class="fas fa-save"></i> Actualizar Estado
+                </button>
+                <button id="close-modal-btn" class="secondary-btn">
+                    <i class="fas fa-times"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Lightbox -->
+    <div id="image-lightbox" class="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
+        <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+
+    <button class="theme-selector" id="theme-selector" aria-label="Cambiar tema">
+        <i class="fas fa-sun"></i>
+    </button>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="/static/js/admin/purchases.js"></script>
+</body>
+
+</html>

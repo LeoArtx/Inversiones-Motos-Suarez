@@ -1,0 +1,50 @@
+<header>
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Moto Suárez" class="logo">
+        <h1>Inversiones Moto Suarez</h1>
+    </div>
+    <div class="user-greeting" id="user-greeting"></div>
+    <nav>
+        {% if current_page != 'index' %}
+        <div class="nav-dropdown" id="nav-dropdown">
+            <button class="dropdown-toggle nav-toggle" id="nav-toggle">
+                <i class="fas fa-bars"></i> Navegación
+            </button>
+            <div class="nav-content" id="nav-content">
+                <a href="/admin_index" class="{% if current_page == 'index' %}active-link{% endif %}"><i
+                        class="fas fa-home"></i> Inicio</a>
+                <a href="/admin/reports" class="{% if current_page == 'reports' %}active-link{% endif %}"><i
+                        class="fas fa-chart-bar"></i> Reportes</a>
+                <a href="/admin/clients" class="{% if current_page == 'clients' %}active-link{% endif %}"><i
+                        class="fas fa-users"></i> Gestión de Clientes</a>
+                <a href="/admin/products" class="{% if current_page == 'products' %}active-link{% endif %}"><i
+                        class="fas fa-boxes"></i> Gestión de Productos</a>
+                <a href="/admin/purchases" class="{% if current_page == 'purchases' %}active-link{% endif %}"><i
+                        class="fas fa-shopping-cart"></i> Gestión de Compras</a>
+            </div>
+        </div>
+        {% endif %}
+        <a href="/login" id="auth-link" class="nav-link auth-link">
+            <i class="fas fa-user"></i> Iniciar Sesión
+        </a>
+        <div class="dropdown-menu" id="user-dropdown" style="display: none;">
+            <button class="dropdown-toggle" id="user-dropdown-toggle">
+                <i class="fas fa-user-circle"></i>
+            </button>
+            <div class="dropdown-content" id="user-dropdown-content">
+                <a href="/profile" class="dropdown-item">
+                    <i class="fas fa-user"></i> Mi Usuario
+                </a>
+                <a href="#" class="dropdown-item" id="logout-link">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+        <a href="/admin/dashboard" id="admin-link" class="nav-link admin-link" style="display: none;">
+            <i class="fas fa-cog"></i> Panel Admin
+        </a>
+        <div class="mobile-menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+</header>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inversiones Moto Suarez - Mis Compras</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Moto Suárez" class="logo">
+            <h1>Inversiones Moto Suarez</h1>
+        </div>
+        <div class="user-greeting" id="user-greeting"></div>
+        <nav>
+            <a href="#" id="auth-link" class="nav-link auth-link">
+                <i class="fas fa-user"></i> Iniciar Sesión
+            </a>
+            <div class="dropdown-menu" id="user-dropdown" style="display: none;">
+                <button class="dropdown-toggle" id="dropdown-toggle">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+                <div class="dropdown-content" id="dropdown-content">
+                    <a href="/" class="dropdown-item">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                    <a href="/catalog" class="dropdown-item">
+                        <i class="fas fa-motorcycle"></i> Productos
+                    </a>
+                    <a href="/cart" class="dropdown-item">
+                        <i class="fas fa-shopping-cart"></i> Mi Carrito
+                    </a>
+                    <a href="/my-purchases" class="dropdown-item">
+                        <i class="fas fa-history"></i> Mis Compras
+                    </a>
+                    <a href="/profile" class="dropdown-item">
+                        <i class="fas fa-user"></i> Mi Usuario
+                    </a>
+                    <a href="#" class="dropdown-item" id="logout-link">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+            <a href="/admin/dashboard" id="admin-link" class="nav-link admin-link" style="display: none;">
+                <i class="fas fa-cog"></i> Panel Admin
+            </a>
+            <div class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="purchases-section">
+            <div class="section-header">
+                <h1><i class="fas fa-history"></i> Mis Compras</h1>
+                <p>Historial de tus transacciones y compras realizadas.</p>
+            </div>
+            <div class="table-container">
+                <table class="purchases-table" id="purchases-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Nombre</th>
+                            <th>Cantidad</th>
+                            <th>Monto Pagado</th>
+                            <th>Fecha</th>
+                            <th>ID de Compra</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="purchases-table-body">
+                        <!-- Purchases will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="empty-purchases" class="empty-state" style="display: block;">
+                <div class="empty-state-content">
+                    <i class="fas fa-shopping-bag empty-icon"></i>
+                    <h3>¡Aún no has realizado compras!</h3>
+                    <p>Visita nuestro catálogo para encontrar los mejores productos para tu motocicleta.</p>
+                    <a href="/catalog" class="btn-primary">Ir al Catálogo</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="client-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <div class="contact-info">
+                    <p><i class="fas fa-phone"></i> +58 426-4603994</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Monagas, Venezuela</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Inversiones Moto Suárez. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button class="theme-selector" id="theme-selector" aria-label="Cambiar tema">
+        <i class="fas fa-sun"></i>
+    </button>
+
+    {% include 'login_modal.html' %}
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/my_purchases.js') }}"></script>
+</body>
+
+</html>

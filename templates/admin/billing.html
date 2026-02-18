@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturar - Inversiones Moto Suarez</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    {% set current_page = '' %}
+    {% include 'admin/header_admin.html' %}
+
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Crear Nueva Factura</h1>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="form-container">
+            <form id="billing-form" action="/api/billing/create" method="POST">
+                <div class="form-group">
+                    <label for="invoice_date">Fecha de Factura:</label>
+                    <input type="date" id="invoice_date" name="invoice_date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="client_cedula">Cédula de Cliente:</label>
+                    <input type="number" id="client_cedula" name="client_cedula" maxlength="8" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="client_name">Nombre del Cliente:</label>
+                    <input type="text" id="client_name" name="client_name" maxlength="30" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="client_phone">Número de Teléfono del Cliente:</label>
+                    <input type="tel" id="client_phone" name="client_phone" maxlength="11" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="client_email">Correo Electrónico del Cliente:</label>
+                    <input type="email" id="client_email" name="client_email" maxlength="255" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="product_name">Nombre del Repuesto/Producto:</label>
+                    <input type="text" id="product_name" name="product_name" maxlength="50" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Cantidad:</label>
+                    <input type="number" id="quantity" name="quantity" maxlength="3" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="unit_price">Precio Unitario:</label>
+                    <input type="number" id="unit_price" name="unit_price" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="total">Total:</label>
+                    <input type="number" id="total" name="total" step="0.01" readonly>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Guardar Factura</button>
+            </form>
+        </div>
+    </main>
+
+    <button class="theme-selector" id="theme-selector" aria-label="Cambiar tema">
+        <i class="fas fa-sun"></i>
+    </button>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+        // Calculate total automatically
+        document.getElementById('quantity').addEventListener('input', calculateTotal);
+        document.getElementById('unit_price').addEventListener('input', calculateTotal);
+
+        function calculateTotal() {
+            const quantity = parseFloat(document.getElementById('quantity').value) || 0;
+            const unitPrice = parseFloat(document.getElementById('unit_price').value) || 0;
+            const total = quantity * unitPrice;
+            document.getElementById('total').value = total.toFixed(2);
+        }
+
+        // Form submission
+        document.getElementById('billing-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/api/billing/create', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Factura guardada exitosamente');
+                        this.reset();
+                    } else {
+                        alert('Error al guardar la factura: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al guardar la factura');
+                });
+        });
+    </script>
+</body>
+
+</html>

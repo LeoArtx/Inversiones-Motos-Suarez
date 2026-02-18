@@ -1,0 +1,48 @@
+[
+    {
+        "id": "PUR-2024-002",
+        "user": {
+            "first_name": "asumakinaria",
+            "last_name": "pers",
+            "cedula": "",
+            "phone": "123",
+            "email": "k@gmail.com"
+        },
+        "products": [
+            {
+                "id": 2,
+                "name": "perro",
+                "price": 1,
+                "quantity": 1
+            }
+        ],
+        "total_amount": 1,
+        "status": "pendiente",
+        "purchase_date": "2025-12-05T21:05:42.393176",
+        "payment_proof": "",
+        "bank_reference": ""
+    },
+    {
+        "id": "PUR-2024-003",
+        "user": {
+            "first_name": "asumakinaria",
+            "last_name": "pers",
+            "cedula": "",
+            "phone": "123",
+            "email": "k@gmail.com"
+        },
+        "products": [
+            {
+                "id": 1,
+                "name": "Brujía",
+                "price": 30,
+                "quantity": 1
+            }
+        ],
+        "total_amount": 30,
+        "status": "pendiente",
+        "purchase_date": "2025-12-05T21:11:59.276048",
+        "payment_proof": "",
+        "bank_reference": ""
+    }
+]
