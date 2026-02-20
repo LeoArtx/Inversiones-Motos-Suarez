@@ -4,7 +4,7 @@
             "first_name": "Admin",
             "last_name": "User",
             "cedula": "00000001",
-            "email": "leonardojosherarc@gmail.com",
+            "email": "admin.motosuarez_fp@gmail.com",
             "password_hash": "$2b$12$fe7yTa9QlHAb6waybhw7QuGxoVhEwB7XyH1GuN8tAoNfNOLLjRnFG",
             "phone": "123",
             "role": "admin"
